@@ -1,0 +1,139 @@
+{
+  "srinivas": {
+    "username": "srinivas",
+    "name": "Dr. Srinivas",
+    "role": "Lead Clinical Geneticist",
+    "canUpload": true,
+    "canExport": true,
+    "passwordHash": "105f21902cbc0c1e0f435bdcfb34843c:7ff692f5aa307cf25d980770bf5e547f4bdcf5c530362f35935c78a774275213fc28de25698e79c29093ba09adbd746bf5ae17ffd2d5438bb634edd4e707bdc7",
+    "createdAt": "2026-11-16T09:03:56.071Z"
+  },
+  "viewer": {
+    "username": "viewer",
+    "name": "Guest Trainee",
+    "role": "Clinical Trainee / Viewer",
+    "canUpload": false,
+    "canExport": false,
+    "passwordHash": "a1b2c3d4e5f60718293a4b5c6d7e8f90:28323ce61ecae22c72e3bd95e13e0ef7fa02a2ec5df9bc933904872c207910954db3ac25d8cf9ca1967242bd0c8e132460172b60f0733ae6db58f450a0b39790",
+    "createdAt": "2026-11-16T09:10:00.000Z"
+  },
+  "geneticist_1794819836148": {
+    "username": "geneticist_1794819836148",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "passwordHash": "78efcb7899e4a65e9e3ae42e0793ca3e:133028ea1797c096e4a3926c0063413f1608a59e4adf85ca25ebe7e60f3ebfaff19a0448ebef58cd6d88879ea05902c93e350efdf4111adabdb3989ec5aeb6fe",
+    "createdAt": "2026-11-16T09:03:56.167Z"
+  },
+  "geneticist_1794895734971": {
+    "username": "geneticist_1794895734971",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "0aef49ed2e08d1a4e3a4f804dd44928a:26da0794170155dd217daa534c220dae3a3a202d96e47079887d017ab20d66a5b70dbabcec231bb42ae86890c17014cccc509c009af8ce42ff0573869c8242b5",
+    "createdAt": "2026-11-17T06:08:54.990Z"
+  },
+  "geneticist_1794895793844": {
+    "username": "geneticist_1794895793844",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "e7a0f04c72a3e0afc8a6320ee306e5e6:b7396fc5cceb86604bc9c58d68b9f816b26a1aedb3c4b177ac0eea77581caab5ca2cc20f5cbe855a77247344d74c551f368697a42912498920a0bb2f1342aee2",
+    "createdAt": "2026-11-17T06:09:53.863Z"
+  },
+  "geneticist_1794898557456": {
+    "username": "geneticist_1794898557456",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "95deb012d3980d402054ad34d421d176:46b48a98af046198ffb0a20aaa5f551a1f0e6fd1d4a93198866635aa691be27c831b1f30a82cba586a5ef25a6ac0ce0723e033f9f3b39b7912f4eaf49037ca13",
+    "createdAt": "2026-11-17T06:55:57.475Z"
+  },
+  "geneticist_1794898882093": {
+    "username": "geneticist_1794898882093",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "a92d94bcec09a330a0a504f8d86a85f1:32c79f12cfa2fc629c4ca00c47ebb8b55bf9ceadd4d175b7cc9d76a37d6abcf64345e638f52f932358e605e2841c5696f43caee4221e8a51f2b4fb4ffd3ce2ec",
+    "createdAt": "2026-11-17T07:01:22.113Z"
+  },
+  "geneticist_1794899011036": {
+    "username": "geneticist_1794899011036",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "d0261acfabdf70dfd65dab05917183d3:9f0d9e006eb173cedfcff128e2a99e661b8a68cf75a6163ef31e183c4ac85450e4167609d1a17b35293f4b03719accb23bb64eecbb92c32fcfeac6088ad5518e",
+    "createdAt": "2026-11-17T07:03:31.055Z"
+  },
+  "geneticist_1794907351232": {
+    "username": "geneticist_1794907351232",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "ad65da6e50d357173d34d364c39dd31d:2c9ac0117e99aae8f481775b1639ee7e4ea9be28ce1cac9dad7d738eda40d4dbf4d40fd6aa9221f5b358684207d0fe353feb4bb4355a837e41f1f9940e974268",
+    "createdAt": "2026-11-17T09:22:31.251Z"
+  },
+  "geneticist_1794907430393": {
+    "username": "geneticist_1794907430393",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "3f706ada2303829d3f35a5149859a2b3:b67c5db5b3a8c79d9d758a49580352aae0da8a1275d247cf6b1c089e0769640973a134ba427e13238f199eed6b290aa0fce9b2bf0656487478ca29983c14720e",
+    "createdAt": "2026-11-17T09:23:50.412Z"
+  },
+  "geneticist_1794908901661": {
+    "username": "geneticist_1794908901661",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$114d6ff283539d95a266eb2511347947$d28f48e996eb946536e422e482da0357f6d5adb7a5fa5027974c56344a5111d292ce549e6628975bc549184efedb30b8c1a91d41a1681adffb70bfe47bab5f4c",
+    "createdAt": "2026-11-17T09:48:21.685Z"
+  },
+  "geneticist_1794909140140": {
+    "username": "geneticist_1794909140140",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$dc4b9738ef350dd80b19518d0d783676$bc42ced0331d96f1d86c6cd4ccd2461478f7c5c677326243f5a65e7a647d2f6fe809fe0198d8a3802722915c07ce469cec595cf1b7dccba873af667cd914e0d6",
+    "createdAt": "2026-11-17T09:52:20.164Z"
+  },
+  "geneticist_1794911104484": {
+    "username": "geneticist_1794911104484",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$bcc1c23d89b2c6a5763b9df4bace23fd$44d83482c27fc36464d5c19e16cecbf3a65a7e6cc778b33d5a687dde619a3176c5c2da90411591c48a6f74ee72cf2a05d18580b915e1e72afca80d05a1c1faf3",
+    "createdAt": "2026-11-17T10:25:04.507Z"
+  },
+  "geneticist_1795068793151": {
+    "username": "geneticist_1795068793151",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$18043f88c61fbeb3620b6231a8480642$b4567e867c44c32ad22064ce12a477cdac4ae68c60fe7f3934957b64d2cef7159622fe48d54f62dbf06ee61169abaf8465a976a954ecefbf3543e6fa2cf91c51",
+    "createdAt": "2026-11-19T06:13:13.175Z"
+  },
+  "geneticist_1795069100570": {
+    "username": "geneticist_1795069100570",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$f7f808af614cc644085f7ae0df246e27$c606030950eca79696595d7b6afa8a7e3d67f4d50b46fe251b512eadfec4512b22ea697d8ef5a021fdbf8a8adaf029db399682bdce443ae3216cdd0ada5c0174",
+    "createdAt": "2026-11-19T06:18:20.593Z"
+  },
+  "geneticist_1795069314971": {
+    "username": "geneticist_1795069314971",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$c459fbce1d5cb40172c975e5355e3256$5384520fae847c2b31895527abd92f4758f9967cf954be29a1d8fdd982497fdf9bb629857ff2e7e204d42415f7f3a11d3f0472bcf4f47b8a044f629278d04ae0",
+    "createdAt": "2026-11-19T06:21:54.994Z"
+  },
+  "geneticist_1795069352097": {
+    "username": "geneticist_1795069352097",
+    "name": "Dr. Test Geneticist",
+    "role": "Bioinformatician",
+    "canUpload": true,
+    "passwordHash": "scrypt$16384$8$1$559972ebc12833a7446a02c0a2000f98$658bbde9429df5feef45516833b610be9b96f7581ab55a5d285d639b1e31dbf2e9e322212ae6d38f068a660a2eaffb44b71b2c801b96af874c7d85a5cb78136a",
+    "createdAt": "2026-11-19T06:22:32.121Z"
+  }
+}

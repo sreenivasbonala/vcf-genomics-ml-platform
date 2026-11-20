@@ -1,0 +1,13 @@
+##fileformat=VCFv4.2
+##fileDate=20261116
+##reference=hg38
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Total Depth">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NA00001	NA00002	NA00003
+chr1	14370	rs6054257	G	A	29	PASS	DP=14	GT:GQ:DP	0|0:48:1	1|0:48:8	1/1:43:5
+chr1	17330	.	T	A	3	q10	DP=11	GT:GQ:DP	0|0:49:3	0|1:3:5	0/0:41:3
+chr20	14370	rs6054258	G	A	29	PASS	DP=14	GT:GQ:DP	0/0:45:2	0/1:50:6	1/1:60:6
+chr20	17330	.	T	A	3	q10	DP=11	GT:GQ:DP	0/0:49:3	0/1:3:5	0/0:41:3
+chr20	1110696	rs6040356	A	G,T	67	PASS	DP=10	GT:GQ:DP	1/2:21:6	2/1:2:0	0/1:35:4

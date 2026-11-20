@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  vcf-genomics-platform:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: vcf-genomics-ml-platform:latest
+    container_name: vcf-genomics-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+      - NODE_ENV=production
+      - PYTHON_PATH=/opt/venv/bin/python3
+    volumes:
+      - ./uploads:/app/uploads
+      - ./genomics.db:/app/genomics.db

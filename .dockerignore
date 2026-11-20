@@ -1,0 +1,10 @@
+.git
+.DS_Store
+uploads/*
+!uploads/.gitkeep
+ml-lab/__pycache__
+*.pyc
+.venv
+venv
+node_modules
+*.zip

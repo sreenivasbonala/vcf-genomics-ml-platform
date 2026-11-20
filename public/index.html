@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VCF Genomics & Clinical Variant Interpretation Platform</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="brand">
+        <div class="brand-icon">🧬</div>
+        <div>
+          <h1>VCF Genomics & Clinical Interpretation</h1>
+          <p class="subtitle">Variant Analysis • ClinVar • ChEBI Metabolites • CIViC Precision Oncology</p>
+        </div>
+      </div>
+      <div class="header-right">
+        <!-- User Authentication Status Bar -->
+        <div class="user-auth-bar" id="userAuthBar">
+          <button id="openLoginBtn" class="btn btn-primary-sm">🔑 Researcher Login</button>
+          <div id="userProfileBadge" class="user-profile-badge hidden">
+            <span class="user-avatar">👤</span>
+            <div class="user-details">
+              <strong id="userNameText">Dr. Srinivas</strong>
+              <span id="userRoleText">Lead Geneticist</span>
+            </div>
+            <button id="logoutBtn" class="btn-logout">Logout</button>
+          </div>
+        </div>
+        <div class="header-badges">
+          <span class="badge badge-primary">⚡ 100 MB Limit</span>
+          <span class="badge badge-success">🔒 PBKDF2 Hashed</span>
+          <span class="badge badge-info">🎯 CIViC & ChEBI</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Upload Card -->
+      <section class="card upload-card">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" id="fileInput" accept=".vcf,.vcf.gz,.vcard" class="file-input">
+          <div class="drop-zone-content">
+            <div class="upload-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+              </svg>
+            </div>
+            <h3>Drag & drop your VCF file here</h3>
+            <p class="drop-subtext">or <span class="browse-link">browse from your computer</span></p>
+            <div class="upload-limits">
+              <span>Strict limit: <strong>100 MB</strong></span> • 
+              <span>Supported: <strong>.vcf</strong>, <strong>.vcf.gz</strong>, <strong>.vcard</strong></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Selected File Status & Actions -->
+        <div id="fileSelectedBox" class="file-selected-box hidden">
+          <div class="file-meta">
+            <div class="file-type-icon" id="fileTypeIcon">📄</div>
+            <div class="file-info">
+              <div class="file-name" id="selectedFileName">filename.vcf</div>
+              <div class="file-size" id="selectedFileSize">0 MB</div>
+            </div>
+          </div>
+          <div class="file-actions">
+            <button id="uploadBtn" class="btn btn-primary">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+              Upload & Analyze
+            </button>
+            <button id="cancelSelectionBtn" class="btn btn-outline">Change File</button>
+          </div>
+        </div>
+
+        <!-- Upload Progress Bar -->
+        <div id="progressContainer" class="progress-container hidden">
+          <div class="progress-header">
+            <span class="progress-title">Uploading & streaming to server...</span>
+            <span class="progress-percentage" id="progressPercentage">0%</span>
+          </div>
+          <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progressBarFill"></div>
+          </div>
+          <div class="progress-footer">
+            <span id="progressDetails" class="progress-details">0 MB / 0 MB</span>
+            <button id="abortBtn" class="btn btn-danger-sm">Cancel Upload</button>
+          </div>
+        </div>
+
+        <!-- Alert Notification Box -->
+        <div id="alertBox" class="alert-box hidden">
+          <div class="alert-icon" id="alertIcon">⚠️</div>
+          <div class="alert-body">
+            <h4 class="alert-title" id="alertTitle">Upload Error</h4>
+            <p class="alert-message" id="alertMessage">Error description goes here.</p>
+          </div>
+          <button id="alertCloseBtn" class="alert-close">&times;</button>
+        </div>
+
+        <!-- Real Benchmark Datasets Quick-Test Bar -->
+        <div class="sample-tests-bar">
+          <span class="samples-label">🧬 Real Benchmark Datasets:</span>
+          <button class="btn-sample btn-real" onclick="loadSample('real_clinvar_grch38.vcf')">🔬 NCBI ClinVar (1.1 MB Real)</button>
+          <button class="btn-sample btn-real" onclick="loadSample('real_1000genomes_chr22.vcf.gz')">🌐 1000 Genomes (.vcf.gz Real)</button>
+          <button class="btn-sample btn-real" onclick="loadSample('real_1000genomes_chr22.vcf')">👥 1000 Genomes (17 MB Real)</button>
+          <button class="btn-sample btn-sample-warn" onclick="loadSample('sample_invalid.vcf')">⚠️ Test Error (422)</button>
+          <button class="btn-sample" style="background:#0284c7; color:#fff; border-color:#0284c7;" onclick="openDatabaseDirectly()">🗄️ View 13 Relations (\dt)</button>
+        </div>
+      </section>
+
+      <!-- Results & Analysis Dashboard (Hidden until successful upload) -->
+      <section id="resultsSection" class="results-section hidden">
+        <!-- Summary Cards Grid -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Format Type</div>
+            <div class="stat-value" id="statFormat">-</div>
+            <div class="stat-sub" id="statVersion">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">File Size</div>
+            <div class="stat-value" id="statSize">-</div>
+            <div class="stat-sub" id="statCompression">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Total Records</div>
+            <div class="stat-value" id="statRecords">-</div>
+            <div class="stat-sub">Parsed variants</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Ti / Tv Ratio (QA)</div>
+            <div class="stat-value" id="statTiTv" style="color:#2563eb;">-</div>
+            <div class="stat-sub" id="statTiTvSub">Transition/Transversion</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Filter PASS Rate</div>
+            <div class="stat-value" id="statPassRate" style="color:#059669;">-</div>
+            <div class="stat-sub" id="statPassRateSub">Quality verified</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Normalization</div>
+            <div class="stat-value" id="statNormStatus" style="font-size:1.15rem; margin-top:8px;">-</div>
+            <div class="stat-sub" id="statNormSub">VCF decomposition</div>
+          </div>
+        </div>
+
+        <!-- Analysis Tabs -->
+        <div class="card analysis-card">
+          <div class="tabs-header">
+            <button class="tab-btn active" data-tab="tabVariants" id="tabBtnVariants">📋 Variants Table</button>
+            <button class="tab-btn" data-tab="tabQuality" id="tabBtnQuality">📊 Quality (Ti/Tv)</button>
+            <button class="tab-btn" data-tab="tabGenes" id="tabBtnGenes">🧬 Gene Distribution</button>
+            <button class="tab-btn" data-tab="tabNorm" id="tabBtnNorm">⚖️ Normalization</button>
+            <button class="tab-btn" data-tab="tabCivic" id="tabBtnCivic">🎯 CIViC Actionability</button>
+            <button class="tab-btn" data-tab="tabChebi" id="tabBtnChebi">🧪 ChEBI Database</button>
+            <button class="tab-btn" data-tab="tabMlPredict" id="tabBtnMlPredict" style="border: 2px solid #8b5cf6; background: #f5f3ff; color: #6d28d9; font-weight: 700;">🤖 ML Pathogenicity & Clustering</button>
+            <button class="tab-btn" data-tab="tabDatabase" id="tabBtnDatabase" style="border: 2px solid #0284c7; background: #e0f2fe; color: #0369a1; font-weight: 700;">🗄️ Database (\dt 13 Tables)</button>
+            <button class="tab-btn" data-tab="tabMetadata" id="tabBtnMetadata">📑 VCF Headers & Metadata</button>
+            <button class="tab-btn" data-tab="tabSamples" id="tabBtnSamples">👥 Sample IDs</button>
+            <button class="tab-btn" data-tab="tabJson">📄 JSON Report</button>
+            <div class="tab-actions">
+              <button id="downloadJsonBtn" class="btn btn-outline-sm">📥 Download Report</button>
+            </div>
+          </div>
+
+          <!-- Tab 1: Variants Table -->
+          <div class="tab-content active" id="tabVariants">
+            <div class="table-responsive">
+              <table class="data-table" id="variantsTable">
+                <thead>
+                  <tr>
+                    <th>#CHROM</th>
+                    <th>POS</th>
+                    <th>ID</th>
+                    <th>REF</th>
+                    <th>ALT</th>
+                    <th>QUAL</th>
+                    <th>FILTER</th>
+                    <th>GENE</th>
+                    <th>INFO</th>
+                  </tr>
+                </thead>
+                <tbody id="variantsTableBody">
+                  <!-- Filled dynamically -->
+                </tbody>
+              </table>
+            </div>
+            <div class="table-footer" id="tableFooter">Showing first records</div>
+          </div>
+
+          <!-- Tab: Quality Assessment (QA) -->
+          <div class="tab-content" id="tabQuality">
+            <div class="qa-grid">
+              <div class="qa-card">
+                <h4>🔬 Transition / Transversion (Ti/Tv) Ratio</h4>
+                <div class="qa-metric-large" id="qaTiTvValue">-</div>
+                <p class="qa-desc" id="qaTiTvAssessment">Evaluates variant calling quality and mutational bias.</p>
+                <div class="qa-submetrics">
+                  <div><span>Transitions (Ti):</span> <strong id="qaTransitionsCount">0</strong></div>
+                  <div><span>Transversions (Tv):</span> <strong id="qaTransversionsCount">0</strong></div>
+                </div>
+                <div class="benchmark-box">
+                  <strong>Expected Benchmarks:</strong>
+                  <ul>
+                    <li>Whole Genome (WGS): <strong>~2.0 – 2.1</strong></li>
+                    <li>Whole Exome (WES): <strong>~2.8 – 3.2</strong></li>
+                  </ul>
+                </div>
+
+                <div class="nucleotide-matrix mt-3">
+                  <h5 style="font-size:0.85rem; font-weight:700; color:#1e3a8a; margin-bottom:6px;">🧬 Nucleotide Transition Breakdown (A↔G, C↔T)</h5>
+                  <div class="nuc-grid">
+                    <div class="nuc-box">
+                      <span class="nuc-pair">A ➔ G:</span>
+                      <strong id="nuc_AG">0</strong>
+                    </div>
+                    <div class="nuc-box">
+                      <span class="nuc-pair">G ➔ A:</span>
+                      <strong id="nuc_GA">0</strong>
+                    </div>
+                    <div class="nuc-box">
+                      <span class="nuc-pair">C ➔ T:</span>
+                      <strong id="nuc_CT">0</strong>
+                    </div>
+                    <div class="nuc-box">
+                      <span class="nuc-pair">T ➔ C:</span>
+                      <strong id="nuc_TC">0</strong>
+                    </div>
+                  </div>
+                  <div class="nuc-totals mt-2">
+                    <span>Purine Transitions (A↔G): <strong id="nuc_AG_total">0</strong></span> • 
+                    <span>Pyrimidine Transitions (C↔T): <strong id="nuc_CT_total">0</strong></span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- QUAL Score Distribution -->
+              <div class="qa-card">
+                <h4>📈 Phred-Scaled QUAL Score Distribution</h4>
+                <div class="qa-summary-row">
+                  <div><span>Mean QUAL:</span> <strong id="qaMeanQual">-</strong></div>
+                  <div><span>Median QUAL:</span> <strong id="qaMedianQual">-</strong></div>
+                  <div><span>Range:</span> <strong id="qaQualRange">-</strong></div>
+                </div>
+                <div class="distribution-bars-container mt-4" id="qualDistributionBars"></div>
+              </div>
+            </div>
+
+            <!-- Read Depth & Filter Breakdown -->
+            <div class="qa-card mt-4">
+              <h4>🛡️ Filter Status & Coverage Depth (DP)</h4>
+              <div class="filter-depth-row">
+                <div class="filter-col">
+                  <span class="sub-label">Filter Tags Breakdown:</span>
+                  <div class="tags-container mt-2" id="filterBreakdownTags"></div>
+                </div>
+                <div class="depth-col" id="depthMetricsCol">
+                  <span class="sub-label">Sequencing Depth (DP) Summary:</span>
+                  <div class="depth-stats" id="depthStatsBox">Checking DP annotations...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Gene-wise Distribution -->
+          <div class="tab-content" id="tabGenes">
+            <div class="gene-header-row">
+              <div>
+                <h3>Gene-wise Variant Distribution</h3>
+                <p class="subtitle" id="geneStatsSubtitle">Identified genes with variant clusters</p>
+              </div>
+              <div class="gene-badges">
+                <span class="badge badge-primary" id="uniqueGenesBadge">0 Unique Genes</span>
+                <span class="badge badge-info" id="annotatedVariantsBadge">0 Annotated Variants</span>
+              </div>
+            </div>
+
+            <div class="table-responsive mt-3">
+              <table class="data-table" id="genesTable">
+                <thead>
+                  <tr>
+                    <th>Rank</th>
+                    <th>Gene Symbol</th>
+                    <th>Variant Count</th>
+                    <th>% of Dataset</th>
+                    <th>Distribution Frequency</th>
+                  </tr>
+                </thead>
+                <tbody id="genesTableBody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Tab: Normalization & Variant Types -->
+          <div class="tab-content" id="tabNorm">
+            <div class="norm-status-banner" id="normStatusBanner">
+              <div class="norm-icon" id="normIcon">⚖️</div>
+              <div>
+                <h4 id="normTitle">VCF Normalization Status</h4>
+                <p id="normSubtitle">Checking variant representation...</p>
+              </div>
+            </div>
+
+            <div class="qa-grid mt-4">
+              <div class="qa-card">
+                <h4>🧬 Variant Types Breakdown</h4>
+                <div class="type-stats-grid">
+                  <div class="type-stat-box">
+                    <span class="type-label">SNVs / SNPs</span>
+                    <span class="type-val" id="typeSnvs">0</span>
+                  </div>
+                  <div class="type-stat-box">
+                    <span class="type-label">Insertions</span>
+                    <span class="type-val" id="typeInsertions">0</span>
+                  </div>
+                  <div class="type-stat-box">
+                    <span class="type-label">Deletions</span>
+                    <span class="type-val" id="typeDeletions">0</span>
+                  </div>
+                  <div class="type-stat-box">
+                    <span class="type-label">Multi-Allelic Sites</span>
+                    <span class="type-val" id="typeMultiAllelic" style="color:#d97706;">0</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="qa-card">
+                <h4>🛠️ Recommended Normalization Protocol</h4>
+                <p class="qa-desc">To split multi-allelic records and left-align indels for downstream clinical variant harmonization:</p>
+                <div class="code-box">
+                  <code id="normCommand">bcftools norm -f &lt;reference.fasta&gt; input.vcf.gz -Oz -o normalized.vcf.gz</code>
+                </div>
+                <div class="norm-checklist mt-3">
+                  <div id="checkMultiAllelic">⚪ Multi-allelic site check</div>
+                  <div id="checkIndelTrim">⚪ Redundant indel prefix/suffix trimming</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: CIViC Cancer Actionability Integration -->
+          <div class="tab-content" id="tabCivic">
+            <div class="civic-header">
+              <div class="civic-brand">
+                <span style="font-size:32px;">🎯</span>
+                <div>
+                  <h3>CIViC (Clinical Interpretation of Variants in Cancer)</h3>
+                  <p class="subtitle">Actionable Targeted Therapies, FDA Evidence Levels & Drug Sensitivity/Resistance Database</p>
+                </div>
+              </div>
+              <div class="civic-badge-wrap">
+                <span class="badge badge-primary">Level A: FDA Approved Evidence</span>
+              </div>
+            </div>
+
+            <!-- CIViC Search Box -->
+            <div class="civic-search-box mt-3">
+              <div class="search-input-wrap">
+                <input type="text" id="civicSearchInput" class="chebi-input" placeholder="Search CIViC cancer gene or drug (e.g. BRAF, EGFR, KRAS, BRCA1, TP53, Osimertinib)..." value="">
+                <button id="civicSearchBtn" class="btn btn-primary">🔍 Query CIViC</button>
+              </div>
+              <div class="chebi-quick-chips mt-2">
+                <span class="chips-label">🎯 Actionable Biomarkers:</span>
+                <button class="chip-btn" onclick="queryCivic('BRAF')">BRAF (V600E)</button>
+                <button class="chip-btn" onclick="queryCivic('EGFR')">EGFR (L858R)</button>
+                <button class="chip-btn" onclick="queryCivic('KRAS')">KRAS (G12C)</button>
+                <button class="chip-btn" onclick="queryCivic('BRCA1')">BRCA1 (PARP Inhibitors)</button>
+                <button class="chip-btn" onclick="queryCivic('TP53')">TP53 (Chemoresistance)</button>
+                <button class="chip-btn" onclick="queryCivic('AGRN')">AGRN (From VCF)</button>
+              </div>
+            </div>
+
+            <!-- CIViC Cards Grid -->
+            <div id="civicResultsContainer" class="mt-4">
+              <div class="chebi-loading-placeholder" id="civicStatusText">Loading CIViC actionable evidence items...</div>
+              <div id="civicCardsGrid" class="civic-cards-grid"></div>
+            </div>
+          </div>
+
+          <!-- Tab: ChEBI Database Integration -->
+          <div class="tab-content" id="tabChebi">
+            <div class="chebi-header">
+              <div class="chebi-brand">
+                <span style="font-size:32px;">🧪</span>
+                <div>
+                  <h3>EMBL-EBI ChEBI Database Integration</h3>
+                  <p class="subtitle">Search Chemical Entities of Biological Interest & Metabolite Biomarkers linked to your variants</p>
+                </div>
+              </div>
+              <div class="chebi-status-badge">
+                <span class="badge badge-success">🟢 Connected to EBI ChEBI REST API</span>
+              </div>
+            </div>
+
+            <!-- ChEBI Search Box -->
+            <div class="chebi-search-box mt-3">
+              <div class="search-input-wrap">
+                <input type="text" id="chebiSearchInput" class="chebi-input" placeholder="Search ChEBI compound, metabolite, or drug (e.g. retinol, ATP, cholesterol, palmitate)..." value="retinol">
+                <button id="chebiSearchBtn" class="btn btn-primary">🔍 Query ChEBI</button>
+              </div>
+              <div class="chebi-quick-chips mt-2">
+                <span class="chips-label">💡 Suggested Queries from your VCF:</span>
+                <button class="chip-btn" onclick="searchChebi('retinol')">Retinol (Vitamin A)</button>
+                <button class="chip-btn" onclick="searchChebi('retinal')">Retinal (Visual pigment)</button>
+                <button class="chip-btn" onclick="searchChebi('rhodopsin')">Rhodopsin</button>
+                <button class="chip-btn" onclick="searchChebi('palmitate')">Palmitate</button>
+                <button class="chip-btn" onclick="searchChebi('cholesterol')">Cholesterol</button>
+                <button class="chip-btn" onclick="searchChebi('ATP')">ATP</button>
+              </div>
+            </div>
+
+            <!-- ChEBI Results Container -->
+            <div id="chebiResultsContainer" class="chebi-results mt-4">
+              <div class="chebi-loading-placeholder text-muted" id="chebiStatusText">Click "Query ChEBI" or a suggestion chip above to fetch real-time compound entities from the official EMBL-EBI database.</div>
+              <div id="chebiCardsList" class="chebi-cards-grid"></div>
+            </div>
+          </div>
+
+          <!-- Tab: Machine Learning Variant Pathogenicity & Clustering -->
+          <div class="tab-content" id="tabMlPredict">
+            <div class="chebi-header" style="border-left: 4px solid #8b5cf6;">
+              <div class="chebi-brand">
+                <span style="font-size:32px;">🤖</span>
+                <div>
+                  <h3 style="color:#6d28d9;">Machine Learning Variant Pathogenicity & Clustering</h3>
+                  <p class="subtitle">Supervised Random Forest (Pathogenic vs Benign) & Unsupervised K-Means Clustering trained on 1,000 Clinical Genomic Variants</p>
+                </div>
+              </div>
+              <div class="action-badges" style="display:flex; gap:8px; flex-wrap:wrap;">
+                <span class="badge" style="background:#8b5cf6; color:#fff; font-size:12px; padding: 6px 12px; border-radius: 12px;">Random Forest (100 Trees)</span>
+                <span class="badge" style="background:#0284c7; color:#fff; font-size:12px; padding: 6px 12px; border-radius: 12px;">K-Means (k=2)</span>
+                <span class="badge" style="background:#10b981; color:#fff; font-size:12px; padding: 6px 12px; border-radius: 12px;">8-Feature Engineering</span>
+              </div>
+            </div>
+
+            <!-- Model Training Performance Evaluation Cards -->
+            <div class="mt-4">
+              <h4 style="color:#4c1d95; font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <span>🎯</span> Supervised Classifier Performance (Evaluated on Test Cohort)
+              </h4>
+              <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+                <div class="metric-card" style="border-top: 3px solid #8b5cf6; background: #faf5ff;">
+                  <div class="metric-label" style="color:#6d28d9;">Model Accuracy</div>
+                  <div class="metric-value" id="mlAccuracy" style="color:#5b21b6;">83.5%</div>
+                  <div class="metric-desc" style="color:#7c3aed;">Test set accuracy</div>
+                </div>
+                <div class="metric-card" style="border-top: 3px solid #10b981; background: #f0fdf4;">
+                  <div class="metric-label" style="color:#059669;">Precision</div>
+                  <div class="metric-value" id="mlPrecision" style="color:#047857;">80.0%</div>
+                  <div class="metric-desc" style="color:#10b981;">Low false positives</div>
+                </div>
+                <div class="metric-card" style="border-top: 3px solid #f59e0b; background: #fffbeb;">
+                  <div class="metric-label" style="color:#d97706;">Recall (Sensitivity)</div>
+                  <div class="metric-value" id="mlRecall" style="color:#b45309;">93.7%</div>
+                  <div class="metric-desc" style="color:#d97706;">93.7% Pathogenic detected</div>
+                </div>
+                <div class="metric-card" style="border-top: 3px solid #0284c7; background: #f0f9ff;">
+                  <div class="metric-label" style="color:#0284c7;">F1-Score</div>
+                  <div class="metric-value" id="mlF1" style="color:#0369a1;">86.3%</div>
+                  <div class="metric-desc" style="color:#0284c7;">Harmonic balance</div>
+                </div>
+                <div class="metric-card" style="border-top: 3px solid #ec4899; background: #fdf2f8;">
+                  <div class="metric-label" style="color:#db2777;">ROC-AUC Score</div>
+                  <div class="metric-value" id="mlRocAuc" style="color:#be185d;">0.925</div>
+                  <div class="metric-desc" style="color:#db2777;">Outstanding discrimination</div>
+                </div>
+                <div class="metric-card" style="border-top: 3px solid #6366f1; background: #eef2ff;">
+                  <div class="metric-label" style="color:#4f46e5;">K-Means Silhouette</div>
+                  <div class="metric-value" id="mlSilhouette" style="color:#4338ca;">0.324</div>
+                  <div class="metric-desc" style="color:#4f46e5;">Unsupervised cluster separation</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- 8 Sample-Level Engineered Features Section -->
+            <div class="mt-4 p-3" style="background:#f8fafc; border: 1px solid #e2e8f0; border-radius: 8px;">
+              <h4 style="color:#1e293b; font-size:15px; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                <span>🔬</span> 8 Engineered Features (Computed from Uploaded VCF Sample)
+              </h4>
+              <div class="summary-grid" style="grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));">
+                <div class="metric-card">
+                  <div class="metric-label">1. Ti/Tv Ratio</div>
+                  <div class="metric-value" id="mlSampleTiTv">-</div>
+                  <div class="metric-desc" id="mlSampleTiTvDesc">Transitions vs Transversions</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">2. Total SNVs</div>
+                  <div class="metric-value" id="mlSampleSnvs">-</div>
+                  <div class="metric-desc">Single Nucleotide Variants</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">3. Total Insertions</div>
+                  <div class="metric-value" id="mlSampleIns">-</div>
+                  <div class="metric-desc">Novel base insertions</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">4. Total Deletions</div>
+                  <div class="metric-value" id="mlSampleDel">-</div>
+                  <div class="metric-desc">Genomic deletions</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">5. Het / Hom Ratio</div>
+                  <div class="metric-value" id="mlSampleHetHom">-</div>
+                  <div class="metric-desc" id="mlSampleHetHomDesc">0/1 vs 1/1 Genotype ratio</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">6. Rare Variant Count</div>
+                  <div class="metric-value" id="mlSampleRareCount">-</div>
+                  <div class="metric-desc" id="mlSampleRarePct">Allele Frequency &lt; 0.01 (1%)</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">7. High-Impact Mutations</div>
+                  <div class="metric-value" id="mlSampleHighImpact">-</div>
+                  <div class="metric-desc" id="mlSampleHighImpactPct">Frameshift, Stop, Splice</div>
+                </div>
+                <div class="metric-card">
+                  <div class="metric-label">8. K-Means Assignment</div>
+                  <div class="metric-value" id="mlSampleClusters">-</div>
+                  <div class="metric-desc">Unsupervised cohort partition</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Variant Pathogenicity Predictions Table -->
+            <div class="mt-4">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:12px;">
+                <h4 style="color:#4c1d95; font-size:15px; margin:0; display:flex; align-items:center; gap:8px;">
+                  <span>📋</span> Variant-Level Pathogenicity Predictions (Tested on Uploaded VCF)
+                </h4>
+                <div style="display:flex; gap:8px;">
+                  <button class="btn btn-outline-sm active" id="filterMlAll" onclick="filterMlTable('ALL')">All (<span id="countMlAll">0</span>)</button>
+                  <button class="btn btn-outline-sm" id="filterMlPathogenic" style="border-color:#ef4444; color:#dc2626;" onclick="filterMlTable('Pathogenic')">🚨 Pathogenic (<span id="countMlPathogenic">0</span>)</button>
+                  <button class="btn btn-outline-sm" id="filterMlBenign" style="border-color:#10b981; color:#059669;" onclick="filterMlTable('Benign')">✅ Benign (<span id="countMlBenign">0</span>)</button>
+                </div>
+              </div>
+
+              <div class="table-responsive">
+                <table class="data-table" id="mlPredictionsTable">
+                  <thead>
+                    <tr>
+                      <th>Locus (Chr:Pos)</th>
+                      <th>Ref &gt; Alt</th>
+                      <th>Gene</th>
+                      <th>Consequence</th>
+                      <th>Impact</th>
+                      <th>ML Predicted Call</th>
+                      <th>Confidence %</th>
+                      <th>K-Means Cluster</th>
+                      <th>Key Risk Signals</th>
+                    </tr>
+                  </thead>
+                  <tbody id="mlPredictionsBody">
+                    <tr><td colspan="9" class="text-center text-muted" style="padding:24px;">Upload or select a VCF file to run ML Pathogenicity predictions.</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Clinical Genomics Relational Database (13 Relations \dt) -->
+          <div class="tab-content" id="tabDatabase">
+            <div class="chebi-header">
+              <div class="chebi-brand">
+                <span style="font-size:32px;">🗄️</span>
+                <div>
+                  <h3>Clinical Genomics Relational Database (13 Relations)</h3>
+                  <p class="subtitle">Exact database schema matching PostgreSQL: <code>\dt</code> with Primary/Foreign Keys, UUIDs, ON DELETE CASCADE & Indexes</p>
+                </div>
+              </div>
+              <div class="chebi-status-badge">
+                <span class="badge badge-success" id="dbStatusBadge">🟢 genomics.db Connected</span>
+              </div>
+            </div>
+
+            <!-- Terminal Window Showing \dt -->
+            <div class="terminal-card mt-3">
+              <div class="terminal-bar">
+                <span class="terminal-dot dot-red"></span>
+                <span class="terminal-dot dot-yellow"></span>
+                <span class="terminal-dot dot-green"></span>
+                <span class="terminal-title">postgresql://genomics@localhost:5432/genomics - psql</span>
+              </div>
+              <div class="terminal-body">
+                <div class="terminal-cmd"><span class="terminal-prompt">genomics=#</span> \dt</div>
+                <div class="terminal-output-title">List of relations</div>
+                <div class="table-responsive">
+                  <table class="terminal-table" id="relationsTable">
+                    <thead>
+                      <tr>
+                        <th>Schema</th>
+                        <th>Name</th>
+                        <th>Type</th>
+                        <th>Owner</th>
+                        <th>Live Records</th>
+                        <th>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody id="relationsTableBody">
+                      <!-- Filled dynamically from /api/db/relations -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- Table Record Inspector & Architecture Details -->
+            <div class="db-inspector-grid mt-4">
+              <!-- Left: Table Viewer -->
+              <div class="inspector-card">
+                <div class="inspector-header">
+                  <h4 id="inspectorTableName">📋 Selected Table: <code>uploaded_files</code></h4>
+                  <button class="btn btn-outline-sm" onclick="refreshCurrentTable()">🔄 Refresh Rows</button>
+                </div>
+                <div class="table-responsive" style="max-height: 320px; overflow-y: auto;">
+                  <table class="data-table" id="tableInspectorTable">
+                    <thead id="inspectorTableHead">
+                      <tr><th>Select a table above to view columns & rows</th></tr>
+                    </thead>
+                    <tbody id="inspectorTableBody">
+                      <tr><td class="text-muted">Loading live database table records...</td></tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <!-- Right: CASCADE & SHA Integrity Panel -->
+              <div class="inspector-side-panel">
+                <!-- ON DELETE CASCADE Demo -->
+                <div class="card p-3 mb-3" style="border-left: 4px solid #ef4444; background: #fff5f5;">
+                  <h4 style="color:#b91c1c; margin-bottom:8px;">⚡ Test ON DELETE CASCADE</h4>
+                  <p style="font-size: 13px; color: #4b5563; line-height: 1.4;">
+                    When a <strong>Patient</strong> row is deleted, all linked <code>uploaded_files</code>, <code>samples</code>, and <code>reports</code> are automatically cascaded and deleted by the database engine without orphaned records.
+                  </p>
+                  <button class="btn btn-danger btn-block mt-2" onclick="runCascadeDeleteDemo()" id="btnCascadeTest">
+                    🧪 Execute Live ON DELETE CASCADE
+                  </button>
+                  <div id="cascadeResultBox" class="mt-2 text-sm hidden" style="font-family:monospace; background:#fff; padding:8px; border-radius:6px; border:1px solid #fca5a5;"></div>
+                </div>
+
+                <!-- SHA-256 & Storage Path Metadata -->
+                <div class="card p-3" style="border-left: 4px solid #3b82f6; background: #f0f9ff;">
+                  <h4 style="color:#1d4ed8; margin-bottom:8px;">🔐 SHA-256 Integrity & Storage</h4>
+                  <div style="font-size:12px; line-height:1.6;">
+                    <div><strong>File Fingerprint (SHA Key):</strong></div>
+                    <code id="dbShaKey" style="word-break:break-all; display:block; background:#fff; padding:6px; border-radius:4px; border:1px solid #bfdbfe; margin-top:2px; font-size:11px;">Upload a VCF to compute SHA-256</code>
+                    <div class="mt-2"><strong>Object Storage Path:</strong></div>
+                    <code id="dbStoragePath" style="word-break:break-all; display:block; background:#fff; padding:6px; border-radius:4px; border:1px solid #bfdbfe; margin-top:2px; font-size:11px;">/uploads/...</code>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Whiteboard Queries Interactive Runner Section -->
+            <div class="card p-4 mt-4" style="border: 2px solid #6366f1; background: #faf5ff;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <div>
+                  <h3 style="color:#4f46e5; margin:0;">📝 Professor's Whiteboard SQL Query Tasks</h3>
+                  <p class="subtitle" style="margin:2px 0 0;">Interactive execution of the 2 queries written on the classroom whiteboard</p>
+                </div>
+                <span class="badge" style="background:#e0e7ff; color:#4338ca; font-weight:700;">Live SQL Engine</span>
+              </div>
+
+              <div class="db-inspector-grid">
+                <!-- Task 1 Card -->
+                <div class="card p-3" style="background:#fff; border:1px solid #c7d2fe;">
+                  <h4 style="color:#3730a3; margin-bottom:6px;">1. Filter Genome Build & Position (Genotype = 1/1)</h4>
+                  <pre style="background:#0f172a; color:#38bdf8; padding:8px; border-radius:6px; font-size:11px; white-space:pre-wrap; margin-bottom:10px;">SELECT gl.genome_build, gl.position
+FROM genomic_loci gl
+JOIN variant_calls vc ON gl.locus_id = vc.locus_id
+WHERE vc.genotype = '1/1';</pre>
+                  <button class="btn btn-primary btn-sm btn-block" onclick="runWhiteboardQuery1()">▶️ Run Query 1</button>
+                  <div id="wbQuery1Result" class="mt-2 text-xs hidden" style="background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-family:monospace;"></div>
+                </div>
+
+                <!-- Task 2 Card -->
+                <div class="card p-3" style="background:#fff; border:1px solid #c7d2fe;">
+                  <h4 style="color:#3730a3; margin-bottom:6px;">2. Update Reference & Alternate Alleles to 'G' and 'A'</h4>
+                  <pre style="background:#0f172a; color:#38bdf8; padding:8px; border-radius:6px; font-size:11px; white-space:pre-wrap; margin-bottom:10px;">UPDATE genomic_loci
+SET reference_allele = 'G', alternate_allele = 'A'
+WHERE locus_id IN (
+  SELECT locus_id FROM variant_calls
+  WHERE filter_status = 'PASS' AND allele_frequency = 0.08
+);</pre>
+                  <button class="btn btn-secondary btn-sm btn-block" onclick="runWhiteboardQuery2()">⚡ Run Query 2 (Update Alleles)</button>
+                  <div id="wbQuery2Result" class="mt-2 text-xs hidden" style="background:#f8fafc; padding:8px; border-radius:6px; border:1px solid #e2e8f0; font-family:monospace;"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tab: Metadata -->
+          <div class="tab-content" id="tabMetadata">
+            <div class="metadata-grid">
+              <div class="meta-item">
+                <span class="meta-key">Reference Genome:</span>
+                <span class="meta-val" id="metaReference">Not specified</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-key">Source Software:</span>
+                <span class="meta-val" id="metaSource">Not specified</span>
+              </div>
+              <div class="meta-item">
+                <span class="meta-key">Header Lines Count:</span>
+                <span class="meta-val" id="metaHeaderCount">0</span>
+              </div>
+            </div>
+            <h4 class="mt-4">Declared INFO Tags:</h4>
+            <div class="tags-container" id="infoTags"></div>
+            <h4 class="mt-4">Declared FILTER Tags:</h4>
+            <div class="tags-container" id="filterTags"></div>
+          </div>
+
+          <!-- Tab: Samples -->
+          <div class="tab-content" id="tabSamples">
+            <p class="tab-desc">Sample identifiers identified from the column definition line:</p>
+            <div class="samples-pill-list" id="samplesList"></div>
+          </div>
+
+          <!-- Tab: JSON Report -->
+          <div class="tab-content" id="tabJson">
+            <pre class="json-viewer" id="jsonViewer">{}</pre>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+      <p>VCF Genomics Platform • Authentication: <strong>PBKDF2-SHA512 Password Hashing</strong> • Limit: <strong>100 MB</strong></p>
+    </footer>
+  </div>
+
+  <!-- AUTHENTICATION MODAL (LOGIN / REGISTER) -->
+  <div id="authModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-brand">
+          <span style="font-size:24px;">🔐</span>
+          <h3>Researcher Authentication</h3>
+        </div>
+        <button id="closeAuthModalBtn" class="modal-close">&times;</button>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab-btn active" id="authTabLoginBtn" onclick="switchAuthTab('login')">Sign In</button>
+        <button class="auth-tab-btn" id="authTabRegisterBtn" onclick="switchAuthTab('register')">Register Account</button>
+      </div>
+
+      <!-- Auth Alert -->
+      <div id="authAlert" class="auth-alert hidden"></div>
+
+      <!-- Login Form -->
+      <form id="loginForm" class="auth-form">
+        <div class="form-group">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" class="auth-input" placeholder="Enter username (e.g. srinivas)" required autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" class="auth-input" placeholder="Enter password" required autocomplete="current-password">
+        </div>
+        <div class="auth-quick-hint">
+          💡 <strong>Default Account:</strong> <code>srinivas</code> / <code>Password@123</code>
+          <button type="button" class="btn-fill-hint" onclick="fillDefaultCredentials()">Auto-fill</button>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">🔐 Authenticate & Sign In</button>
+      </form>
+
+      <!-- Register Form -->
+      <form id="registerForm" class="auth-form hidden">
+        <div class="form-group">
+          <label for="regUsername">Username</label>
+          <input type="text" id="regUsername" class="auth-input" placeholder="Choose a username" required>
+        </div>
+        <div class="form-group">
+          <label for="regName">Full Name</label>
+          <input type="text" id="regName" class="auth-input" placeholder="e.g. Dr. Jane Watson" required>
+        </div>
+        <div class="form-group">
+          <label for="regRole">Clinical Role</label>
+          <input type="text" id="regRole" class="auth-input" placeholder="e.g. Senior Geneticist" value="Clinical Geneticist">
+        </div>
+        <div class="form-group">
+          <label for="regPassword">Password (Min 6 chars)</label>
+          <input type="password" id="regPassword" class="auth-input" placeholder="Choose a secure password" required minlength="6">
+        </div>
+        <div class="security-badge-note">
+          🔒 Passwords are cryptographically salted and hashed using <strong>PBKDF2 + SHA-512</strong> (100,000 iterations). Plaintext is never stored.
+        </div>
+        <button type="submit" class="btn btn-primary btn-block mt-3">✨ Create Account & Hash Password</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

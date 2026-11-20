@@ -1,0 +1,18 @@
+BEGIN:VCARD
+VERSION:3.0
+FN:Dr. Jane Watson
+N:Watson;Jane;;;
+ORG:Genomics Research Institute
+TITLE:Principal Investigator
+EMAIL;TYPE=INTERNET:jane.watson@genomics.org
+TEL;TYPE=WORK:+1-555-0199
+END:VCARD
+BEGIN:VCARD
+VERSION:3.0
+FN:Alex Turing
+N:Turing;Alex;;;
+ORG:Bioinformatics Core
+TITLE:Senior Computational Biologist
+EMAIL;TYPE=INTERNET:alex.turing@biocore.org
+TEL;TYPE=WORK:+1-555-0144
+END:VCARD

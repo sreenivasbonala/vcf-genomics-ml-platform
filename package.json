@@ -1,0 +1,19 @@
+{
+  "name": "vcf-upload-app",
+  "version": "1.0.0",
+  "description": "High-performance VCF upload & analysis application with streaming 100MB limit and error handling",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test.js"
+  },
+  "keywords": [
+    "vcf",
+    "genomics",
+    "file-upload",
+    "streaming",
+    "vcard"
+  ],
+  "author": "",
+  "license": "MIT"
+}
