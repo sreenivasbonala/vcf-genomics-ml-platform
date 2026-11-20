@@ -212,7 +212,7 @@ with tab1:
         
         df_display = pd.DataFrame(table_rows)
 
-        # Style highlight
+        # Style highlight (supports both modern pandas .map and legacy .applymap)
         def highlight_pathogenicity(val):
             if val == "Pathogenic":
                 return "background-color: #fee2e2; color: #991b1b; font-weight: bold;"
@@ -220,8 +220,14 @@ with tab1:
                 return "background-color: #dcfce7; color: #166534; font-weight: bold;"
             return ""
 
-        styled_df = df_display.style.applymap(highlight_pathogenicity, subset=["Prediction"])
-        st.dataframe(styled_df, use_container_width=True, height=350)
+        try:
+            if hasattr(df_display.style, "map"):
+                styled_df = df_display.style.map(highlight_pathogenicity, subset=["Prediction"])
+            else:
+                styled_df = df_display.style.applymap(highlight_pathogenicity, subset=["Prediction"])
+            st.dataframe(styled_df, use_container_width=True, height=350)
+        except Exception:
+            st.dataframe(df_display, use_container_width=True, height=350)
 
         # Download Report
         csv = df_display.to_csv(index=False).encode('utf-8')
