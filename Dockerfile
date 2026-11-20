@@ -1,7 +1,7 @@
 # =========================================================================
 # Multi-Language Dockerfile: Node.js 20 + Python 3.11 for Genomics & ML
 # =========================================================================
-FROM node:20-bookworm-slim
+FROM node:22-bookworm-slim
 
 # Avoid prompts during apt installs
 ENV DEBIAN_FRONTEND=noninteractive
